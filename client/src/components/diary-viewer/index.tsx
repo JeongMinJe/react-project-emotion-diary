@@ -4,17 +4,17 @@ import DiaryHeader from "./DiaryHeader";
 
 const DiaryViewer = () => {
   return (
-    <div className="flex flex-col h-full gap-4">
-      <header className="h-1/5 flex-shrink-0">
+    <div className="flex flex-col gap-4">
+      {/* h-1/5 제거 */}
+      <header className="flex-shrink-0">
         <DiaryHeader />
       </header>
 
-      {/* 일기 내용이 길어지면 이 영역만 스크롤됩니다. */}
-      <div className="flex-grow overflow-y-auto shadow-md">
-        <DiaryContent />
+      <div className="flex-grow overflow-y-auto min-h-0">
+        <DiaryContent onOpenChat={() => {}} />
       </div>
 
-      <footer className="h-72 flex-shrink-0 shadow-md">
+      <footer className="h-72 flex-shrink-0">
         <ConversationSection />
       </footer>
     </div>

@@ -1,31 +1,92 @@
+import axios from "axios";
+import { BeatLoader } from "react-spinners";
+import { useEffect, useRef, useState } from "react";
+import { GoPaperAirplane } from "react-icons/go";
+import type { Message } from "../../types/chat";
+import { FaRobot } from "react-icons/fa6";
+import MessageBubble from "./MessageBubble";
+
 const ConversationSection = () => {
+  const [chatHistory, setChatHistory] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!inputValue.trim()) return;
+
+    const newUserMessage = { role: "user", content: inputValue };
+
+    setChatHistory((prev) => [...prev, newUserMessage]);
+    setInputValue("");
+    setIsLoading(true);
+
+    try {
+      const { data } = await axios.post("http://localhost:4000/api/chat", {
+        messages: [...chatHistory, newUserMessage],
+      });
+
+      setChatHistory((prev) => [...prev, data.reply]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    inputRef.current?.focus();
+  }, [chatHistory]);
+
   return (
     <div className="flex flex-col h-full">
       {/* 1. 채팅 기록 표시 영역 */}
       <div className="flex-grow overflow-y-auto p-4">
-        {/* {messages.map((msg, index) => (
-        <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`p-3 rounded-lg max-w-xs ${msg.role === 'user' ? 'bg-green-200' : 'bg-gray-200'}`}>
-            {msg.content}
+        {/* 2. map 부분을 MessageBubble 컴포넌트로 교체 */}
+        {chatHistory.map((chat, index) => (
+          <MessageBubble key={index} chat={chat} />
+        ))}
+
+        {isLoading && (
+          <div className="flex justify-start mb-4 items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
+              <FaRobot className="text-slate-500" />
+            </div>
+            <div className="bg-slate-200 py-3 px-5 rounded-2xl rounded-bl-none">
+              <BeatLoader color={"#64748b"} size={8} />
+            </div>
           </div>
-        </div>
-      ))}
-      {/* 2. 로딩 중일 때 '...' 인디케이터 표시 */}
-        {/* {isLoading && <div>...</div>} */}
+        )}
+        <div ref={messagesEndRef} />
       </div>
-      {/* 3. 메시지 입력 폼 */}
-      <form className="p-4 flex">
-        <input
-          type="text"
-          className="flex-grow border rounded-lg p-2"
-          placeholder="메시지를 입력하세요..."
-        />
-        <button
-          type="submit"
-          className="ml-2 bg-blue-500 text-white p-2 rounded-lg"
-        >
-          전송
-        </button>
+
+      {/* 2. 메시지 입력 폼 (반응형 적용) */}
+      <form
+        onSubmit={handleSubmit}
+        className="p-4 bg-slate-100 border-t border-slate-200"
+      >
+        <div className="flex items-center bg-white rounded-full shadow-sm px-4">
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="flex-grow p-3 bg-transparent focus:outline-none"
+            placeholder="메시지를 입력하세요..."
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            className="p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-slate-300"
+            disabled={isLoading || !inputValue.trim()} // 입력값이 없을 때도 비활성화
+          >
+            <GoPaperAirplane className="w-6 h-6" />
+          </button>
+        </div>
       </form>
     </div>
   );
