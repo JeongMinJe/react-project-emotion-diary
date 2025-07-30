@@ -67,24 +67,24 @@ const ConversationSection = () => {
       {/* 2. 메시지 입력 폼 (반응형 적용) */}
       <form
         onSubmit={handleSubmit}
-        className="p-4 bg-slate-100 border-t border-slate-200"
+        className="p-3 bg-slate-50 border-t border-slate-200"
       >
-        <div className="flex items-center bg-white rounded-full shadow-sm px-4">
+        <div className="flex items-center bg-white border border-slate-300 rounded-full px-2 py-1 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
           <input
             ref={inputRef}
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="flex-grow p-3 bg-transparent focus:outline-none"
+            className="flex-grow bg-transparent p-2 focus:outline-none"
             placeholder="메시지를 입력하세요..."
             disabled={isLoading}
           />
           <button
             type="submit"
-            className="p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-slate-300"
-            disabled={isLoading || !inputValue.trim()} // 입력값이 없을 때도 비활성화
+            className="p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none disabled:bg-slate-300 transition-colors"
+            disabled={isLoading || !inputValue.trim()}
           >
-            <GoPaperAirplane className="w-6 h-6" />
+            <GoPaperAirplane className="w-5 h-5" />
           </button>
         </div>
       </form>
