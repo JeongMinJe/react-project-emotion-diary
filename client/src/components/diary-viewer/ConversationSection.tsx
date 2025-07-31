@@ -2,7 +2,7 @@ import axios from "axios";
 import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
-import type { Message } from "../../types/chat";
+import type { Message } from "../../types/message";
 import { FaRobot } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
 

@@ -5,7 +5,7 @@ interface DiaryContentProps {
 
 const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 h-full flex flex-col">
+    <div className="bg-white rounded-xl shadow-md p-6 flex flex-col h-full">
       {/* 일기 입력 영역 */}
       <textarea
         className="flex-grow w-full p-3 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"

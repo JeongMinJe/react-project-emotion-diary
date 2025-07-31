@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import admin from "firebase-admin";
+import { db } from "./firebase.js"; // Firestore DB 인스턴스 import
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
@@ -42,6 +45,31 @@ app.post("/api/chat", async (req, res) => {
   } catch (error) {
     console.error("Error while communication with OpenAI:", error);
     res.status(500).json({ error: "Failed to get response from AI" });
+  }
+});
+
+app.post("/api/diaries", async (req, res) => {
+  try {
+    console.log("요청이 왔습니다.");
+
+    const newDiary = {
+      user_id: "CWD91jDBLyyNNo4jbNKK",
+      emotion_score: 5,
+      title: "테스트 일기",
+      content: "서버에서 자동으로 생성된 테스트 일기입니다.",
+      // 3. serverTimestamp()를 Admin SDK 방식으로 변경
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // 4. 데이터 추가 방식을 Admin SDK 방식으로 변경
+    const docRef = await db.collection("diaries").add(newDiary);
+
+    res
+      .status(201)
+      .json({ message: "Diary saved successfully", id: docRef.id });
+  } catch (error) {
+    console.error("Error saving diary:", error);
+    res.status(500).json({ error: "Failed to save diary" });
   }
 });
 

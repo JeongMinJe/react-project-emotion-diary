@@ -1,6 +1,6 @@
 // components/MessageBubble.tsx
 
-import type { Message } from "../../types/chat";
+import type { Message } from "../../types/message";
 import { FaRobot } from "react-icons/fa"; // AI 아바타용 아이콘
 
 interface MessageBubbleProps {

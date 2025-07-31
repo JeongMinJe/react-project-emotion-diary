@@ -4,19 +4,18 @@ import DiaryHeader from "./DiaryHeader";
 
 const DiaryViewer = () => {
   return (
-    <div className="flex flex-col gap-4">
-      {/* h-1/5 제거 */}
+    <div className="flex flex-col gap-4 h-full shadow-md">
       <header className="flex-shrink-0">
         <DiaryHeader />
       </header>
 
-      <div className="flex-grow overflow-y-auto min-h-0">
+      <main className="flex-grow overflow-y-auto min-h-0 ">
         <DiaryContent onOpenChat={() => {}} />
-      </div>
+      </main>
 
-      <footer className="h-72 flex-shrink-0">
+      {/* <footer className="h-72 flex-shrink-0">
         <ConversationSection />
-      </footer>
+      </footer> */}
     </div>
   );
 };
