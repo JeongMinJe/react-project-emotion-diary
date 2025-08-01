@@ -2,7 +2,7 @@ import ConversationSection from "./ConversationSection";
 import DiaryContent from "./DiaryContent";
 import DiaryHeader from "./DiaryHeader";
 
-const DiaryViewer = () => {
+const DiaryEditer = () => {
   return (
     <div className="flex flex-col gap-4 h-full shadow-md">
       <header className="flex-shrink-0">
@@ -20,4 +20,4 @@ const DiaryViewer = () => {
   );
 };
 
-export default DiaryViewer;
+export default DiaryEditer;
