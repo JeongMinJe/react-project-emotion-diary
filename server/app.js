@@ -48,21 +48,45 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
+app.get("/api/diaries", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    const userRef = db.collection("users");
+    const userQuery = await userRef.where("email", "==", email).limit(1).get();
+
+    // 사용자 못 찾을 경우
+
+    // 사용자 찾은 경우
+    const userId = userQuery.docs[0].id;
+
+    const diariesRef = db.collection("diaries");
+    const diariesQuery = await diariesRef.where("user_id", "==", userId).get();
+
+    const processedDiaries = diariesQuery.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        title: data.title,
+        content: data.content,
+        date: data.created_at.toDate(),
+      };
+    });
+
+    res.status(200).json(processedDiaries);
+  } catch (error) {
+    console.error("Error  diary:", error);
+    res.status(500).json({ error: "Failed to get diaries" });
+  }
+});
+
 app.post("/api/diaries", async (req, res) => {
   try {
-    console.log("요청이 왔습니다.");
-
-    const newDiary = {
-      user_id: "CWD91jDBLyyNNo4jbNKK",
-      emotion_score: 5,
-      title: "테스트 일기",
-      content: "서버에서 자동으로 생성된 테스트 일기입니다.",
-      // 3. serverTimestamp()를 Admin SDK 방식으로 변경
+    const diaryTobeSaved = {
+      ...req.body,
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    // 4. 데이터 추가 방식을 Admin SDK 방식으로 변경
-    const docRef = await db.collection("diaries").add(newDiary);
+    const docRef = await db.collection("diaries").add(diaryTobeSaved);
 
     res
       .status(201)

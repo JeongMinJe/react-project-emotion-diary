@@ -1,6 +1,7 @@
 import { FaLink } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DiaryListItemProps } from "../../types/diary";
+import axios from "axios";
 
 const ListItem = ({ title, content, date }: DiaryListItemProps) => (
   <div className="bg-white rounded-md shadow-sm p-4 mb-2 cursor-pointer hover:bg-slate-100 transition-colors">
@@ -13,28 +14,21 @@ const ListItem = ({ title, content, date }: DiaryListItemProps) => (
 );
 
 const List = () => {
-  const [diaries] = useState<DiaryListItemProps[]>([
-    {
-      title: "Morning Thoughts",
-      content: "Diary Thoughts we yolinghing iy",
-      date: "October 26, 2023",
-    },
-    {
-      title: "Ary dip",
-      content: "Ustrope sheudhed the hage.",
-      date: "October 26, 2023",
-    },
-    {
-      title: "Meeting Notes",
-      content: "Ursiropuer, mad onferestion nage",
-      date: "October 25, 2023",
-    },
-    {
-      title: "Thy dip",
-      content: "Uraved Notes your Inagt wouking",
-      date: "October 25, 2023",
-    },
-  ]);
+  const [diaries, setDiaries] = useState<DiaryListItemProps[]>([]);
+
+  const getDiaries = async () => {
+    const response = await axios.get("http://localhost:4000/api/diaries", {
+      params: {
+        email: "test@example.com",
+      },
+    });
+
+    setDiaries(response.data);
+  };
+
+  useEffect(() => {
+    getDiaries();
+  }, []);
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 h-full flex flex-col">
