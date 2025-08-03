@@ -60,7 +60,7 @@ const ConversationSection = () => {
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 p-2 border-b border-slate-200 flex items-center justify-between">
         <button className="p-2 rounded-full hover:bg-slate-100">
-          <FaArrowLeft className="h-5 w-5 text-slate-500" />
+          <FaArrowLeft className="h-5 w-5 text-slate-500 cursor-pointer" />
         </button>
         <button
           disabled={isListFetching > 0}
