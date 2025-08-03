@@ -1,38 +1,46 @@
+import {
+  useIsFetching,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import axios from "axios";
 import { useRef } from "react";
+import { ImSpinner2 } from "react-icons/im";
 
-// 부모로부터 onOpenChat 함수를 prop으로 받기 위한 타입 정의
 interface DiaryContentProps {
   onOpenChat: () => void;
 }
 
+interface DiaryPost {
+  title: string;
+  content: string;
+}
+
 const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
+  const queryClient = useQueryClient();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  /**
-   * 클릭했을 때 그 내용을 백엔드로 전달해야 함.
-   * 일단 오늘은 그것부터!
-   */
 
-  const saveDiary = async () => {
-    try {
-      const content = textAreaRef.current?.value;
+  const isListFetching = useIsFetching({ queryKey: ["diaries"] });
 
-      // content 가 없을 경우도 처리해야 함.
+  const { mutate } = useMutation({
+    mutationFn: (newDiary: DiaryPost) =>
+      axios.post("http://localhost:4000/api/diaries", newDiary),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["diaries"] });
+    },
+  });
 
-      const newDiary = {
-        user_id: "CWD91jDBLyyNNo4jbNKK",
-        emotion_score: 5,
-        title: "테스트 일기",
-        content,
-      };
+  const handleSave = () => {
+    const content = textAreaRef.current?.value || "";
 
-      const response = await axios.post(
-        "http://localhost:4000/api/diaries",
-        newDiary
-      );
+    const newDiary = {
+      title: "새 일기",
+      user_id: "CWD91jDBLyyNNo4jbNKK",
+      emotion_score: 5,
+      content,
+    };
 
-      console.log(response);
-    } catch (error) {}
+    mutate(newDiary);
   };
 
   return (
@@ -55,10 +63,17 @@ const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
 
         {/* 일기 저장 버튼 (주요 버튼) */}
         <button
-          onClick={saveDiary}
-          className="w-full py-2.5 px-4 font-medium bg-slate-500 text-white border border-transparent rounded-full transition-colors hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400"
+          disabled={isListFetching > 0}
+          onClick={handleSave}
+          className={`w-full py-2.5 px-4 font-medium bg-slate-500 text-white border border-transparent rounded-full transition-colors hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 ${
+            isListFetching > 0 ? "opacity-70 cursor-not-allowed" : ""
+          }`}
         >
-          일기 저장
+          {isListFetching ? (
+            <ImSpinner2 className="animate-spin h-5 w-5" /> // 아이콘 크기 지정
+          ) : (
+            "일기 저장"
+          )}
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-export interface DiaryListItemProps {
+export interface DiaryListItem {
   title: string;
   content: string;
   date: string;
