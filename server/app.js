@@ -17,6 +17,34 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 app.use(cors());
 app.use(express.json());
 
+app.get("/api/diaries", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    const userRef = db.collection("users");
+    const userQuery = await userRef.where("email", "==", email).limit(1).get();
+
+    // 사용자 못 찾을 경우에 대한 결과도 추가해야 할 듯...
+
+    // 사용자 찾은 경우부터 고고
+    const userDocId = userQuery.docs[0].id;
+
+    const diariesRef = db.collection("diaries");
+    const diariesQuery = await diariesRef
+      .where("user_doc_id", "==", userDocId)
+      .orderBy("created_at", "desc")
+      .get();
+
+    setTimeout(() => {
+      const rawDiaries = diariesQuery.docs.map((doc) => doc.data());
+      res.status(200).json(rawDiaries);
+    }, 3000);
+  } catch (error) {
+    console.error("Error  diary:", error);
+    res.status(500).json({ error: "Failed to get diaries" });
+  }
+});
+
 app.post("/api/chat", async (req, res) => {
   try {
     const { messages } = req.body;
@@ -47,34 +75,6 @@ app.post("/api/chat", async (req, res) => {
   } catch (error) {
     console.error("Error while communication with Gemini:", error);
     res.status(500).json({ error: "Failed to get response from AI" });
-  }
-});
-
-app.get("/api/diaries", async (req, res) => {
-  try {
-    const { email } = req.query;
-
-    const userRef = db.collection("users");
-    const userQuery = await userRef.where("email", "==", email).limit(1).get();
-
-    // 사용자 못 찾을 경우
-
-    // 사용자 찾은 경우
-    const userDocId = userQuery.docs[0].id;
-
-    const diariesRef = db.collection("diaries");
-    const diariesQuery = await diariesRef
-      .where("user_doc_id", "==", userDocId)
-      .orderBy("created_at", "desc")
-      .get();
-
-    setTimeout(() => {
-      const rawDiaries = diariesQuery.docs.map((doc) => doc.data());
-      res.status(200).json(rawDiaries);
-    }, 3000);
-  } catch (error) {
-    console.error("Error  diary:", error);
-    res.status(500).json({ error: "Failed to get diaries" });
   }
 });
 
