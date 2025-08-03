@@ -1,6 +1,7 @@
-import { FaLink } from "react-icons/fa6";
+import { FaChevronDown, FaLink } from "react-icons/fa6";
 import type { DiaryListItem } from "../../types/diary";
 import { useGetDiaries } from "../../queries/useDiaries";
+import { useState } from "react";
 
 const SkeletonItem = () => {
   return (
@@ -11,15 +12,55 @@ const SkeletonItem = () => {
     </div>
   );
 };
-const ListItem = ({ title, content, date }: DiaryListItem) => (
-  <div className="bg-white rounded-md shadow-sm p-4 mb-2 cursor-pointer hover:bg-slate-100 transition-colors">
-    <h3 className="font-semibold text-slate-700 text-sm sm:text-base truncate">
-      {title}
-    </h3>
-    <p className="text-slate-500 text-xs sm:text-sm truncate">{content}</p>
-    <time className="text-slate-400 text-xs mt-1">{date}</time>
-  </div>
-);
+
+const ListItem = ({ title, content, created_at }: DiaryListItem) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const getFirstSentence = (text: string) => {
+    const firstSentence = text.split(".")[0];
+    const maxLength = 80;
+    if (firstSentence && firstSentence.length > maxLength) {
+      return firstSentence.substring(0, maxLength) + "...";
+    }
+    return firstSentence || "";
+  };
+
+  const firstSentence = getFirstSentence(content);
+
+  return (
+    <div className="border-b border-slate-200 last:border-b-0">
+      <div
+        className="grid grid-cols-[1fr_auto] items-center gap-4 p-4 cursor-pointer hover:bg-slate-50"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="truncate">
+          <h3 className="font-semibold text-slate-800 truncate">{title}</h3>
+          {!isOpen && (
+            <p className="text-slate-500 text-xs sm:text-sm truncate">
+              {firstSentence}
+            </p>
+          )}
+          <time className="text-slate-500 text-xs">{created_at}</time>
+        </div>
+
+        <FaChevronDown
+          className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </div>
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="text-slate-600 text-sm p-4 pt-0">{content}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const List = () => {
   const {
@@ -52,7 +93,7 @@ const List = () => {
                 key={index}
                 title={diary.title}
                 content={diary.content}
-                date={diary.date}
+                created_at={diary.created_at}
               />
             ))}
 

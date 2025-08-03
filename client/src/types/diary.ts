@@ -1,7 +1,7 @@
 export interface DiaryListItem {
   title: string;
   content: string;
-  date: string;
+  created_at: string;
 }
 
 export interface DiaryPost {

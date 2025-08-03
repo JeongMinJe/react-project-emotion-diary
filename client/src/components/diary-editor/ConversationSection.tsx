@@ -13,12 +13,16 @@ import { useSaveDiary } from "../../queries/useDiaries";
 import { useIsFetching } from "@tanstack/react-query";
 import { ImSpinner2 } from "react-icons/im";
 
-const ConversationSection = () => {
+interface ConversationSectionProps {
+  onGoBack: () => void;
+}
+
+const ConversationSection = ({ onGoBack }: ConversationSectionProps) => {
   const isListFetching = useIsFetching({ queryKey: ["diaries"] });
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const { mutate: saveDiary } = useSaveDiary();
 
+  const { mutate: saveDiary } = useSaveDiary();
   const { mutate: sendMessage, isPending } = useSendMessage(setChatHistory);
   const { mutateAsync: generateDiaryEntryFromAI } =
     useGenerateDiaryEntryFromAI();
@@ -60,7 +64,10 @@ const ConversationSection = () => {
     <div className="flex flex-col h-full">
       <header className="flex-shrink-0 p-2 border-b border-slate-200 flex items-center justify-between">
         <button className="p-2 rounded-full hover:bg-slate-100">
-          <FaArrowLeft className="h-5 w-5 text-slate-500 cursor-pointer" />
+          <FaArrowLeft
+            onClick={onGoBack}
+            className="h-5 w-5 text-slate-500 cursor-pointer"
+          />
         </button>
         <button
           disabled={isListFetching > 0}
