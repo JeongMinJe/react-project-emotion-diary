@@ -1,6 +1,6 @@
 import { FaCircleUser } from "react-icons/fa6";
 
-const DiaryHeader = () => {
+const Header = () => {
   return (
     <section className="flex items-center border-b border-slate-200 pb-4">
       {/* 제목 (왼쪽) */}
@@ -19,4 +19,4 @@ const DiaryHeader = () => {
   );
 };
 
-export default DiaryHeader;
+export default Header;

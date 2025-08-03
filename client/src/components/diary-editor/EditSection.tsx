@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRef } from "react";
 import { ImSpinner2 } from "react-icons/im";
 
-interface DiaryContentProps {
+interface EditSectionProps {
   onOpenChat: () => void;
 }
 
@@ -15,7 +15,7 @@ interface DiaryPost {
   content: string;
 }
 
-const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
+const EditSection = ({ onOpenChat }: EditSectionProps) => {
   const queryClient = useQueryClient();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -79,4 +79,4 @@ const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
   );
 };
 
-export default DiaryContent;
+export default EditSection;

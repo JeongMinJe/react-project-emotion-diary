@@ -1,19 +1,19 @@
 import { useState } from "react";
 import ConversationSection from "./ConversationSection";
-import DiaryContent from "./DiaryContent";
-import DiaryHeader from "./DiaryHeader";
+import EditSection from "./EditSection";
+import Header from "./Header";
 
-const DiaryEditer = () => {
+const DiaryEditor = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="flex flex-col h-full shadow-md">
       <header className="flex-shrink-0">
-        <DiaryHeader />
+        <Header />
       </header>
 
       <main className="flex-grow overflow-y-auto min-h-0 ">
-        <DiaryContent
+        <EditSection
           onOpenChat={() => {
             setIsChatOpen(true);
           }}
@@ -27,4 +27,4 @@ const DiaryEditer = () => {
   );
 };
 
-export default DiaryEditer;
+export default DiaryEditor;
