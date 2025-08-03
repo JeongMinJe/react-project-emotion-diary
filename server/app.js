@@ -35,9 +35,25 @@ app.get("/api/diaries", async (req, res) => {
       .orderBy("created_at", "desc")
       .get();
 
+    const processedDiaries = diariesQuery.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        diary_doc_id: doc.id,
+        user_doc_id: userDocId,
+        title: data.title,
+        content: data.content,
+        created_at: data.created_at.toDate().toLocaleString("ko-KR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+    });
+
     setTimeout(() => {
-      const rawDiaries = diariesQuery.docs.map((doc) => doc.data());
-      res.status(200).json(rawDiaries);
+      res.status(200).json(processedDiaries);
     }, 3000);
   } catch (error) {
     console.error("Error  diary:", error);
