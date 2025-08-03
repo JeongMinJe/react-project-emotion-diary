@@ -61,18 +61,15 @@ app.get("/api/diaries", async (req, res) => {
     const userId = userQuery.docs[0].id;
 
     const diariesRef = db.collection("diaries");
-    const diariesQuery = await diariesRef.where("user_id", "==", userId).get();
+    const diariesQuery = await diariesRef
+      .where("user_id", "==", userId)
+      .orderBy("created_at", "desc")
+      .get();
 
-    const processedDiaries = diariesQuery.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        title: data.title,
-        content: data.content,
-        date: data.created_at.toDate(),
-      };
-    });
-
-    res.status(200).json(processedDiaries);
+    setTimeout(() => {
+      const rawDiaries = diariesQuery.docs.map((doc) => doc.data());
+      res.status(200).json(rawDiaries);
+    }, 3000);
   } catch (error) {
     console.error("Error  diary:", error);
     res.status(500).json({ error: "Failed to get diaries" });
