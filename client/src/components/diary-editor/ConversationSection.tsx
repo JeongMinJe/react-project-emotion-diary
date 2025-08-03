@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
@@ -6,16 +6,18 @@ import type { Message } from "../../types/message";
 import { FaArrowLeft } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
 import { PiCatBold } from "react-icons/pi";
+import { useGenerateSummary, useSendMessage } from "../../queries/useAI";
 
 const ConversationSection = () => {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync: generateSummary } = useGenerateSummary();
+  const { mutate: sendMessage, isPending } = useSendMessage(setChatHistory);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!inputValue.trim()) return;
 
@@ -23,19 +25,15 @@ const ConversationSection = () => {
 
     setChatHistory((prev) => [...prev, newUserMessage]);
     setInputValue("");
-    setIsLoading(true);
 
-    try {
-      const { data } = await axios.post("http://localhost:4000/api/chat", {
-        messages: [...chatHistory, newUserMessage],
-      });
+    sendMessage([...chatHistory, newUserMessage]);
+  };
 
-      setChatHistory((prev) => [...prev, data.reply]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSaveWithSummary = async () => {
+    const response = await generateSummary(chatHistory);
+    const summaryFromAI = response.data.summary;
+
+    console.log(summaryFromAI);
   };
 
   useEffect(() => {
@@ -49,8 +47,11 @@ const ConversationSection = () => {
         <button className="p-2 rounded-full hover:bg-slate-100">
           <FaArrowLeft className="h-5 w-5 text-slate-500" />
         </button>
-        <button className="py-2 px-4 text-sm font-semibold bg-slate-500 text-white rounded-lg hover:bg-slate-800">
-          대화로 일기 저장
+        <button
+          onClick={handleSaveWithSummary}
+          className="py-2 px-4 text-sm font-semibold bg-slate-400 text-white rounded-lg hover:bg-slate-600"
+        >
+          AI 요약으로 일기 저장
         </button>
       </header>
       {/* 1. 채팅 기록 표시 영역 */}
@@ -60,7 +61,7 @@ const ConversationSection = () => {
           <MessageBubble key={index} chat={chat} />
         ))}
 
-        {isLoading && (
+        {isPending && (
           <div className="flex justify-start mb-4 items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
               <PiCatBold className="text-slate-500" />
@@ -86,12 +87,12 @@ const ConversationSection = () => {
             onChange={(e) => setInputValue(e.target.value)}
             className="flex-grow bg-transparent p-2 focus:outline-none"
             placeholder="메시지를 입력하세요..."
-            disabled={isLoading}
+            disabled={isPending}
           />
           <button
             type="submit"
             className="p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none disabled:bg-slate-300 transition-colors"
-            disabled={isLoading || !inputValue.trim()}
+            disabled={isPending || !inputValue.trim()}
           >
             <GoPaperAirplane className="w-5 h-5" />
           </button>

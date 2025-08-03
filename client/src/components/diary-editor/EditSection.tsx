@@ -1,46 +1,19 @@
-import {
-  useIsFetching,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import axios, { type AxiosResponse } from "axios";
+import { useIsFetching } from "@tanstack/react-query";
 import { useRef } from "react";
 import { ImSpinner2 } from "react-icons/im";
+import { useSaveDiary } from "../../queries/useDiaries";
+import { useGenerateTitle } from "../../queries/useAI";
 
 interface EditSectionProps {
   onOpenChat: () => void;
 }
 
-interface GeneratedTitle {
-  title: string;
-}
-
-interface DiaryPost {
-  content: string;
-}
-
 const EditSection = ({ onOpenChat }: EditSectionProps) => {
-  const queryClient = useQueryClient();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
   const isListFetching = useIsFetching({ queryKey: ["diaries"] });
 
-  const { mutate: saveDiary } = useMutation({
-    mutationFn: (newDiary: DiaryPost) =>
-      axios.post("http://localhost:4000/api/diaries", newDiary),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["diaries"] });
-    },
-  });
-
-  const { mutateAsync: generateTitle } = useMutation<
-    AxiosResponse<GeneratedTitle>,
-    Error,
-    string
-  >({
-    mutationFn: (content: string) =>
-      axios.post("http://localhost:4000/api/generate-title", { content }),
-  });
+  const { mutate: saveDiary } = useSaveDiary();
+  const { mutateAsync: generateTitle } = useGenerateTitle();
 
   const handleSave = async () => {
     const content = textAreaRef.current?.value || "";
@@ -66,30 +39,25 @@ const EditSection = ({ onOpenChat }: EditSectionProps) => {
         className="flex-grow w-full p-3 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-slate-400 transition-colors"
         placeholder="오늘 하루는 어땠나요?"
       />
-
       <div className="mt-4 flex items-center justify-end gap-3">
-        {/* AI와 대화 버튼 */}
+        {/* AI와 대화 버튼 (기준) */}
         <button
           onClick={onOpenChat}
-          className="py-3 px-6 text-sm font-semibold text-slate-500 bg-white border border-slate-300 rounded-lg transition-colors hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300"
+          className="cursor-pointer w-32 h-11 flex justify-center items-center text-sm font-semibold text-slate-500 bg-white border border-slate-300 rounded-lg transition-colors hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300"
         >
           AI와 대화
         </button>
 
-        {/* 일기 저장 버튼 */}
+        {/* 일기 저장 버튼 (수정) */}
         <button
           disabled={isListFetching > 0}
           onClick={handleSave}
-          className={`py-3 px-6 text-sm font-semibold bg-slate-700 text-white rounded-lg transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 ${
-            isListFetching > 0 ? "opacity-70 cursor-not-allowed" : ""
-          }`}
+          className={`cursor-pointer w-32 h-11 flex justify-center items-center text-sm font-semibold bg-slate-700 text-white rounded-lg transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 disabled:opacity-70 disabled:cursor-not-allowed`}
         >
-          {isListFetching ? (
-            <div className="flex items-center justify-center">
-              <ImSpinner2 className="animate-spin h-4 w-4 mr-2" /> 저장 중...
-            </div>
+          {isListFetching > 0 ? (
+            <ImSpinner2 className="animate-spin h-5 w-5" />
           ) : (
-            "일기 저장"
+            <span>일기 저장</span>
           )}
         </button>
       </div>

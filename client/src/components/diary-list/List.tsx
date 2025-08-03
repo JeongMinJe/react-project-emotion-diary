@@ -1,7 +1,6 @@
 import { FaLink } from "react-icons/fa6";
 import type { DiaryListItem } from "../../types/diary";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useGetDiaries } from "../../queries/useDiaries";
 
 const SkeletonItem = () => {
   return (
@@ -27,19 +26,7 @@ const List = () => {
     data: diaries,
     isFetching,
     isPending,
-  } = useQuery<DiaryListItem[]>({
-    queryKey: ["diaries", "test@example.com"],
-    queryFn: async () => {
-      const response = await axios.get("http://localhost:4000/api/diaries", {
-        params: {
-          email: "test@example.com",
-        },
-      });
-
-      return response.data;
-    },
-    refetchOnWindowFocus: false,
-  });
+  } = useGetDiaries("test@example.com");
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 h-full flex flex-col">

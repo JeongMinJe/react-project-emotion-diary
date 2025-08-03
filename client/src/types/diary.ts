@@ -3,3 +3,7 @@ export interface DiaryListItem {
   content: string;
   date: string;
 }
+
+export interface DiaryPost {
+  content: string;
+}
