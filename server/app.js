@@ -19,31 +19,33 @@ app.use(express.json());
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const defaultMessage =
-      "이 프롬프트의 주 목적은 그날그날의 감정을 기록하는 유저와의 대화, 나아가 상담이다. 이 문장 이후에는 User 와 당신의 대화 내역을 전달해줄 것이며 각각 작성자를 구분해줄 것이므로 당신은 대화 내역을 참고하여 유저와 당신이 나눈 이야기들을 바탕으로 유저의 메시지에 응답해주길 바란다.";
-
     const { messages } = req.body;
 
-    const chatHistory = messages.map((msg) => {
-      const { role, content } = msg;
-      return `작성자: ${role}, 내용: ${content}`;
-    });
-
-    if (!messages) {
+    if (!messages || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required" });
     }
 
-    const result = await model.generateContent([
-      defaultMessage,
-      ...chatHistory,
-    ]);
+    // 1. Gemini가 이해하는 형식으로 대화 기록 변환
+    const history = messages.slice(0, -1).map((msg) => ({
+      // 마지막 메시지 제외
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.content }],
+    }));
+
+    // 2. 마지막 메시지는 새로운 질문으로 사용
+    const lastMessage = messages[messages.length - 1].content;
+
+    // 3. 채팅 세션 시작 및 메시지 전송
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessage(lastMessage);
 
     const response = result.response;
     const text = response.text();
 
+    // 'assistant' role로 통일하여 클라이언트에 응답
     res.json({ reply: { role: "assistant", content: text } });
   } catch (error) {
-    console.error("Error while communication with OpenAI:", error);
+    console.error("Error while communication with Gemini:", error);
     res.status(500).json({ error: "Failed to get response from AI" });
   }
 });
