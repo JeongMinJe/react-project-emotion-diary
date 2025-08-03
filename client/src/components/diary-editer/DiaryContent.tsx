@@ -33,7 +33,7 @@ const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
     const content = textAreaRef.current?.value || "";
 
     const newDiary = {
-      user_id: "CWD91jDBLyyNNo4jbNKK",
+      user_doc_id: "CWD91jDBLyyNNo4jbNKK",
       content,
     };
 

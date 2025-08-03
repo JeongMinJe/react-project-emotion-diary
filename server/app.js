@@ -58,11 +58,11 @@ app.get("/api/diaries", async (req, res) => {
     // 사용자 못 찾을 경우
 
     // 사용자 찾은 경우
-    const userId = userQuery.docs[0].id;
+    const userDocId = userQuery.docs[0].id;
 
     const diariesRef = db.collection("diaries");
     const diariesQuery = await diariesRef
-      .where("user_id", "==", userId)
+      .where("user_doc_id", "==", userDocId)
       .orderBy("created_at", "desc")
       .get();
 
@@ -78,8 +78,19 @@ app.get("/api/diaries", async (req, res) => {
 
 app.post("/api/diaries", async (req, res) => {
   try {
+    const defaultMessage =
+      "당신을 일기 제목을 정해야 합니다. 사용자의 일기내용을 전달할 테니, 내용을 아우를 수 있는 일기 제목을 1개 보내주시기 바랍니다. 다음은 일기의 내용입니다.";
+    const { content, user_doc_id } = req.body;
+
+    const result = await model.generateContent([defaultMessage, content]);
+
+    const diaryTitleFromAI = result.response.text();
+
     const diaryTobeSaved = {
-      ...req.body,
+      user_doc_id,
+      title: diaryTitleFromAI,
+      content,
+      emotion_score: 5,
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     };
 
