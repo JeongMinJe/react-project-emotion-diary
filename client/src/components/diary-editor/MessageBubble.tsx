@@ -1,7 +1,7 @@
 // components/MessageBubble.tsx
 
+import { PiCatBold } from "react-icons/pi";
 import type { Message } from "../../types/message";
-import { FaRobot } from "react-icons/fa"; // AI 아바타용 아이콘
 
 interface MessageBubbleProps {
   chat: Message;
@@ -24,7 +24,7 @@ const MessageBubble = ({ chat }: MessageBubbleProps) => {
     <div className="flex justify-start mb-4 items-start gap-3">
       {/* AI 아바타 */}
       <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-        <FaRobot className="text-slate-500" />
+        <PiCatBold className="text-slate-500" />
       </div>
       {/* AI 메시지 */}
       <div className="bg-slate-200 text-slate-800 py-2 px-4 rounded-2xl rounded-bl-none max-w-[80%] sm:max-w-md">

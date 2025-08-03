@@ -3,8 +3,9 @@ import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
 import type { Message } from "../../types/message";
-import { FaArrowLeft, FaRobot } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
+import { PiCatBold } from "react-icons/pi";
 
 const ConversationSection = () => {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
@@ -62,7 +63,7 @@ const ConversationSection = () => {
         {isLoading && (
           <div className="flex justify-start mb-4 items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-              <FaRobot className="text-slate-500" />
+              <PiCatBold className="text-slate-500" />
             </div>
             <div className="bg-slate-200 py-3 px-5 rounded-2xl rounded-bl-none">
               <BeatLoader color={"#64748b"} size={8} />
