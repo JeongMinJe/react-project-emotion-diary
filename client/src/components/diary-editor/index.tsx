@@ -12,17 +12,17 @@ const DiaryEditor = () => {
         <Header />
       </header>
 
-      <main className="flex-grow overflow-y-auto min-h-0 ">
+      {/* <main className="flex-grow overflow-y-auto min-h-0 ">
         <EditSection
           onOpenChat={() => {
             setIsChatOpen(true);
           }}
         />
-      </main>
-
-      {/* <main className="flex-grow overflow-y-auto min-h-0">
-        <ConversationSection />
       </main> */}
+
+      <main className="flex-grow overflow-y-auto min-h-0">
+        <ConversationSection />
+      </main>
     </div>
   );
 };

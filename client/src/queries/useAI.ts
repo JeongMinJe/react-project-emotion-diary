@@ -2,15 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import type { Message } from "../types/message";
 import type { AxiosResponse } from "axios";
 import axios from "axios";
-import type { GeneratedSummary, GeneratedTitle } from "../types/AI";
+import type { GeneratedTitle } from "../types/AI";
 
-const postSummaryRequest = (chatHistory: Message[]) => {
-  return axios.post("http://localhost:4000/api/ai/summary", { chatHistory });
+const generateDiaryEntryRequest = (chatHistory: Message[]) => {
+  return axios.post("http://localhost:4000/api/ai/diary-entry", {
+    chatHistory,
+  });
 };
 
-export const useGenerateSummary = () => {
-  return useMutation<AxiosResponse<GeneratedSummary>, Error, Message[]>({
-    mutationFn: postSummaryRequest,
+export const useGenerateDiaryEntryFromAI = () => {
+  return useMutation({
+    mutationFn: generateDiaryEntryRequest,
   });
 };
 

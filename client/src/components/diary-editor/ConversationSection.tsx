@@ -1,4 +1,3 @@
-import axios, { type AxiosResponse } from "axios";
 import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
@@ -6,13 +5,23 @@ import type { Message } from "../../types/message";
 import { FaArrowLeft } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
 import { PiCatBold } from "react-icons/pi";
-import { useGenerateSummary, useSendMessage } from "../../queries/useAI";
+import {
+  useGenerateDiaryEntryFromAI,
+  useSendMessage,
+} from "../../queries/useAI";
+import { useSaveDiary } from "../../queries/useDiaries";
+import { useIsFetching } from "@tanstack/react-query";
+import { ImSpinner2 } from "react-icons/im";
 
 const ConversationSection = () => {
+  const isListFetching = useIsFetching({ queryKey: ["diaries"] });
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const { mutateAsync: generateSummary } = useGenerateSummary();
+  const { mutate: saveDiary } = useSaveDiary();
+
   const { mutate: sendMessage, isPending } = useSendMessage(setChatHistory);
+  const { mutateAsync: generateDiaryEntryFromAI } =
+    useGenerateDiaryEntryFromAI();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,11 +38,17 @@ const ConversationSection = () => {
     sendMessage([...chatHistory, newUserMessage]);
   };
 
-  const handleSaveWithSummary = async () => {
-    const response = await generateSummary(chatHistory);
-    const summaryFromAI = response.data.summary;
+  const handleSaveWithSummaryFromAI = async () => {
+    const response = await generateDiaryEntryFromAI(chatHistory);
+    const { summary, title } = response.data;
 
-    console.log(summaryFromAI);
+    const newDiary = {
+      title,
+      user_doc_id: "CWD91jDBLyyNNo4jbNKK",
+      content: summary,
+    };
+
+    saveDiary(newDiary);
   };
 
   useEffect(() => {
@@ -48,10 +63,15 @@ const ConversationSection = () => {
           <FaArrowLeft className="h-5 w-5 text-slate-500" />
         </button>
         <button
-          onClick={handleSaveWithSummary}
-          className="py-2 px-4 text-sm font-semibold bg-slate-400 text-white rounded-lg hover:bg-slate-600"
+          disabled={isListFetching > 0}
+          onClick={handleSaveWithSummaryFromAI}
+          className="cursor-pointer w-48 h-8 flex justify-center items-center py-2 px-4 text-sm font-semibold bg-slate-400 text-white rounded-lg hover:bg-slate-600 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          AI 요약으로 일기 저장
+          {isListFetching > 0 ? (
+            <ImSpinner2 className="animate-spin h-5 w-5" />
+          ) : (
+            <span>AI 요약으로 일기 저장</span>
+          )}
         </button>
       </header>
       {/* 1. 채팅 기록 표시 영역 */}

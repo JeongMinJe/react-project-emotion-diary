@@ -52,7 +52,7 @@ const EditSection = ({ onOpenChat }: EditSectionProps) => {
         <button
           disabled={isListFetching > 0}
           onClick={handleSave}
-          className={`cursor-pointer w-32 h-11 flex justify-center items-center text-sm font-semibold bg-slate-700 text-white rounded-lg transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 disabled:opacity-70 disabled:cursor-not-allowed`}
+          className={`cursor-pointer w-32 h-11 flex justify-center items-center text-sm font-semibold bg-slate-400 text-white rounded-lg transition-colors hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-70 disabled:cursor-not-allowed`}
         >
           {isListFetching > 0 ? (
             <ImSpinner2 className="animate-spin h-5 w-5" />
