@@ -3,12 +3,16 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { useRef } from "react";
 import { ImSpinner2 } from "react-icons/im";
 
 interface EditSectionProps {
   onOpenChat: () => void;
+}
+
+interface GeneratedTitle {
+  title: string;
 }
 
 interface DiaryPost {
@@ -21,7 +25,7 @@ const EditSection = ({ onOpenChat }: EditSectionProps) => {
 
   const isListFetching = useIsFetching({ queryKey: ["diaries"] });
 
-  const { mutate } = useMutation({
+  const { mutate: saveDiary } = useMutation({
     mutationFn: (newDiary: DiaryPost) =>
       axios.post("http://localhost:4000/api/diaries", newDiary),
     onSuccess: () => {
@@ -29,15 +33,29 @@ const EditSection = ({ onOpenChat }: EditSectionProps) => {
     },
   });
 
-  const handleSave = () => {
+  const { mutateAsync: generateTitle } = useMutation<
+    AxiosResponse<GeneratedTitle>,
+    Error,
+    string
+  >({
+    mutationFn: (content: string) =>
+      axios.post("http://localhost:4000/api/generate-title", { content }),
+  });
+
+  const handleSave = async () => {
     const content = textAreaRef.current?.value || "";
+    if (!content.trim()) return; // 어딘가에, 알림을 주어야 할 듯.
+
+    const response = await generateTitle(content);
+    const titleFromAI = response.data.title;
 
     const newDiary = {
+      title: titleFromAI,
       user_doc_id: "CWD91jDBLyyNNo4jbNKK",
       content,
     };
 
-    mutate(newDiary);
+    saveDiary(newDiary);
   };
 
   return (

@@ -76,21 +76,28 @@ app.get("/api/diaries", async (req, res) => {
   }
 });
 
-app.post("/api/diaries", async (req, res) => {
+app.post("/api/generate-title", async (req, res) => {
   try {
+    const { content } = req.body;
+
     const defaultMessage =
-      "당신을 일기 제목을 정해야 합니다. 사용자의 일기내용을 전달할 테니, 내용을 아우를 수 있는 일기 제목을 1개 보내주시기 바랍니다. 다음은 일기의 내용입니다.";
-    const { content, user_doc_id } = req.body;
+      "당신을 일기 제목을 정해야 합니다. 사용자의 일기내용을 전달할 테니, 핵심적인 내용을 추려 일기 제목을 작성하고 1개 보내주시기 바랍니다. 다음은 일기의 내용입니다.";
 
     const result = await model.generateContent([defaultMessage, content]);
 
     const diaryTitleFromAI = result.response.text();
 
+    res.status(200).json(diaryTitleFromAI);
+  } catch (error) {
+    console.error("Error getting diary title from Gemini:", error);
+    res.status(500).json({ error: "Failed to get title" });
+  }
+});
+
+app.post("/api/diaries", async (req, res) => {
+  try {
     const diaryTobeSaved = {
-      user_doc_id,
-      title: diaryTitleFromAI,
-      content,
-      emotion_score: 5,
+      ...req.body,
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     };
 
