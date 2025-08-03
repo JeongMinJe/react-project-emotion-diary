@@ -3,7 +3,7 @@ import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
 import type { Message } from "../../types/message";
-import { FaRobot } from "react-icons/fa6";
+import { FaArrowLeft, FaRobot } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
 
 const ConversationSection = () => {
@@ -44,6 +44,14 @@ const ConversationSection = () => {
 
   return (
     <div className="flex flex-col h-full">
+      <header className="flex-shrink-0 p-2 border-b border-slate-200 flex items-center justify-between">
+        <button className="p-2 rounded-full hover:bg-slate-100">
+          <FaArrowLeft className="h-5 w-5 text-slate-500" />
+        </button>
+        <button className="py-2 px-4 text-sm font-semibold bg-slate-500 text-white rounded-lg hover:bg-slate-800">
+          대화로 일기 저장
+        </button>
+      </header>
       {/* 1. 채팅 기록 표시 영역 */}
       <div className="flex-grow overflow-y-auto p-4">
         {/* 2. map 부분을 MessageBubble 컴포넌트로 교체 */}
@@ -67,7 +75,7 @@ const ConversationSection = () => {
       {/* 2. 메시지 입력 폼 (반응형 적용) */}
       <form
         onSubmit={handleSubmit}
-        className="p-3 bg-slate-50 border-t border-slate-200"
+        className="p-3 bg-slate-100 border-t border-slate-200"
       >
         <div className="flex items-center bg-white border border-slate-300 rounded-full px-2 py-1 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
           <input

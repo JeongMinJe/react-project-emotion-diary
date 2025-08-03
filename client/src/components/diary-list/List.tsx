@@ -36,8 +36,6 @@ const List = () => {
         },
       });
 
-      console.log(response.data);
-
       return response.data;
     },
     refetchOnWindowFocus: false,
@@ -56,14 +54,12 @@ const List = () => {
       {/* 일기 목록 */}
       <div className="overflow-y-auto flex-grow">
         {isPending ? (
-          // 1. 최초 로딩 시: 스켈레톤 5개 표시
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 4 }).map((_, index) => (
             <SkeletonItem key={index} />
           ))
         ) : (
           <>
             {isFetching && <SkeletonItem />}
-
             {diaries?.map((diary, index) => (
               <ListItem
                 key={index}

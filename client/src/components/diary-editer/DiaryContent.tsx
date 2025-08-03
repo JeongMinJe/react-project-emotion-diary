@@ -12,7 +12,6 @@ interface DiaryContentProps {
 }
 
 interface DiaryPost {
-  title: string;
   content: string;
 }
 
@@ -34,9 +33,7 @@ const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
     const content = textAreaRef.current?.value || "";
 
     const newDiary = {
-      title: "새 일기",
       user_id: "CWD91jDBLyyNNo4jbNKK",
-      emotion_score: 5,
       content,
     };
 
@@ -52,25 +49,27 @@ const DiaryContent = ({ onOpenChat }: DiaryContentProps) => {
         placeholder="오늘 하루는 어땠나요?"
       />
 
-      <div className="mt-4 flex items-center gap-3">
-        {/* AI와 대화 버튼 (보조 버튼) */}
+      <div className="mt-4 flex items-center justify-end gap-3">
+        {/* AI와 대화 버튼 */}
         <button
           onClick={onOpenChat}
-          className="w-full py-2.5 px-4 font-medium text-slate-500 bg-white border border-slate-300 rounded-full transition-colors hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300"
+          className="py-3 px-6 text-sm font-semibold text-slate-500 bg-white border border-slate-300 rounded-lg transition-colors hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-300"
         >
           AI와 대화
         </button>
 
-        {/* 일기 저장 버튼 (주요 버튼) */}
+        {/* 일기 저장 버튼 */}
         <button
           disabled={isListFetching > 0}
           onClick={handleSave}
-          className={`w-full py-2.5 px-4 font-medium bg-slate-500 text-white border border-transparent rounded-full transition-colors hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 ${
+          className={`py-3 px-6 text-sm font-semibold bg-slate-700 text-white rounded-lg transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 ${
             isListFetching > 0 ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >
           {isListFetching ? (
-            <ImSpinner2 className="animate-spin h-5 w-5" /> // 아이콘 크기 지정
+            <div className="flex items-center justify-center">
+              <ImSpinner2 className="animate-spin h-4 w-4 mr-2" /> 저장 중...
+            </div>
           ) : (
             "일기 저장"
           )}
