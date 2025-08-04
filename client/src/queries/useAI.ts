@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { Message } from "../types/message";
 import type { AxiosResponse } from "axios";
 import axios from "axios";
-import type { GeneratedTitle } from "../types/AI";
+import type { GeneratedTitle } from "../types/ai";
 
 const generateDiaryEntryRequest = (chatHistory: Message[]) => {
   return axios.post("http://localhost:4000/api/ai/diary-entry", {
