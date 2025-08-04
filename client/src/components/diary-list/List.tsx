@@ -1,5 +1,5 @@
 import { FaChevronDown, FaLink } from "react-icons/fa6";
-import type { DiaryListItem } from "../../types/diary";
+import type { DiaryListItem } from "../../types/diaries";
 import { useGetDiaries } from "../../queries/useDiaries";
 import { useState } from "react";
 

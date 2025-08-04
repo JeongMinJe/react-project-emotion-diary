@@ -61,6 +61,21 @@ app.get("/api/diaries", async (req, res) => {
   }
 });
 
+app.get("/api/users", async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    const userRef = db.collection("users");
+    const userQuery = await userRef.where("email", "==", email).limit(1).get();
+
+    const extractedUserData = userQuery.docs[0].data();
+
+    res.status(200).json(extractedUserData);
+  } catch (error) {
+    res.status(500).json({ error: "failed to get user information." });
+  }
+});
+
 app.post("/api/chat", async (req, res) => {
   try {
     const { messages } = req.body;

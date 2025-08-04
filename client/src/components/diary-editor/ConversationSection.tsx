@@ -1,7 +1,7 @@
 import { BeatLoader } from "react-spinners";
 import { useEffect, useRef, useState } from "react";
 import { GoPaperAirplane } from "react-icons/go";
-import type { Message } from "../../types/message";
+import type { Message } from "../../types/messages";
 import { FaArrowLeft } from "react-icons/fa6";
 import MessageBubble from "./MessageBubble";
 import { PiCatBold } from "react-icons/pi";

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import type { Message } from "../types/message";
+import type { Message } from "../types/messages";
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import type { GeneratedTitle } from "../types/ai";

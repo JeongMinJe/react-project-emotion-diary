@@ -1,7 +1,7 @@
 // components/MessageBubble.tsx
 
 import { PiCatBold } from "react-icons/pi";
-import type { Message } from "../../types/message";
+import type { Message } from "../../types/messages";
 
 interface MessageBubbleProps {
   chat: Message;

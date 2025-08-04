@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { DiaryListItem, DiaryPost } from "../types/diary";
+import type { DiaryListItem, DiaryPost } from "../types/diaries";
 import axios from "axios";
 
 const getDiaries = async (email: string): Promise<DiaryListItem[]> => {
